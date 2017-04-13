@@ -1,0 +1,10 @@
+src
+tests
+typings
+.editorconfig
+.gitattributes
+.travis.yml
+.vscode
+tslint.json
+tsconfig.json
+gulpfile.ts

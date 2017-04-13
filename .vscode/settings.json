@@ -1,0 +1,9 @@
+{
+  // TS LINT
+
+  // An additional rules directory
+  "tslint.rulesDirectory": "./tools/tslint/",
+  // Configure glob patterns of file paths to exclude from linting
+  "tslint.exclude": "node_modules/**/*",
+  "typescript.tsdk": "./node_modules/typescript/lib"
+}

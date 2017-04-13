@@ -1,0 +1,66 @@
+{
+  "name": "@cashfarm/store",
+  "version": "0.0.1",
+  "description": "Library for easily defining and using your Read Model (as in DDD Read Model)",
+  "author": "Saulo Vallory <saulo@cashfarm.tech>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cashfarm/store/issues"
+  },
+  "homepage": "https://github.com/cashfarm/store#README",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "setup:dev": "yarn install && ln -s ../../lib node_modules/@cashfarm/store",
+    "build": "npm run clean && npm run lint && npm test && tsc && npm run lint:pkg",
+    "clean": "trash ./lib",
+    "docs": "./node_modules/.bin/typedoc --out ./docs --target es6 --mode file --ignoreCompilerErrors",
+    "docs:publish": "./node_modules/.bin/gh-pages -d docs",
+    "lint": "tslint -r node_modules/@cashfarm/tslint-rules/lib -c ./tslint.json ./src/**/*.ts",
+    "lint:pkg": "ts-package-lint",
+    "test": "cd tests && mocha --compilers ts:ts-node/register ./**/*.spec.ts",
+    "test:watch": "tsc -w & nodemon --watch lib --watch tests -e js,ts --exec 'npm test' --delay 500ms",
+    "test:debug": "cd tests && tsc && node-inspector ../node_modules/.bin/_mocha ./compiled/tests/*.spec.js --debug-brk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cashfarm/store.git"
+  },
+  "keywords": [
+    "shiny"
+  ],
+  "dependencies": {
+    "debug": "^2.2.0",
+    "lodash": "^4.17.4",
+    "mysql": "^2.11.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.5.0",
+    "@types/expect": "^1.20.1",
+    "@types/lodash": "^4.14.62",
+    "@types/mocha": "^2.2.40",
+    "@types/mysql": "0.0.29",
+    "@types/sinon": "^2.1.2",
+    "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-concat-filenames": "^1.2.0",
+    "gulp-folders": "^1.1.0",
+    "gulp-util": "^3.0.7",
+    "gulpclass": "^0.1.1",
+    "mocha": "^3.2.0",
+    "nyc": "^10.2.0",
+    "publish": "^0.6.0",
+    "sinon": "^2.1.0",
+    "source-map-support": "^0.4.2",
+    "trash": "^4.0.1",
+    "ts-node": "^3.0.2",
+    "ts-package-lint": "^0.2.2",
+    "tslib": "^1.6.0",
+    "tslint": "^5.1.0",
+    "tslint-microsoft-contrib": "^4.0.1",
+    "typedoc": "^0.5.10",
+    "typescript": "^2.2.2",
+    "typings": "^1.3.2",
+    "watch-run": "^1.2.5"
+  }
+}
