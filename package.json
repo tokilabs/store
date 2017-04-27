@@ -11,7 +11,7 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "setup:dev": "yarn install && ln -s ../../lib node_modules/@cashfarm/store",
+    "setup:dev": "npm i -g yarn && yarn install && mkdir -p node_modules/@cashfarm && ln -sf ../../lib node_modules/@cashfarm/store",
     "build": "npm run clean && npm run lint && npm test && tsc && npm run lint:pkg",
     "clean": "trash ./lib",
     "docs": "./node_modules/.bin/typedoc --out ./docs --target es6 --mode file --ignoreCompilerErrors",
@@ -20,7 +20,8 @@
     "lint:pkg": "ts-package-lint",
     "test": "cd tests && mocha --compilers ts:ts-node/register ./**/*.spec.ts",
     "test:watch": "tsc -w & nodemon --watch lib --watch tests -e js,ts --exec 'npm test' --delay 500ms",
-    "test:debug": "cd tests && tsc && node-inspector ../node_modules/.bin/_mocha ./compiled/tests/*.spec.js --debug-brk"
+    "test:debug": "cd tests && tsc && node-inspector ../node_modules/.bin/_mocha ./compiled/tests/*.spec.js --debug-brk",
+    "patch-release": "npm version patch && npm publish && git push --follow-tags"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
     "shiny"
   ],
   "dependencies": {
+    "@cashfarm/lang": "^0.0.1",
     "debug": "^2.2.0",
     "lodash": "^4.17.4",
     "mysql": "^2.11.1"
@@ -53,6 +55,7 @@
     "sinon": "^2.1.0",
     "source-map-support": "^0.4.2",
     "trash": "^4.0.1",
+    "trash-cli": "^1.4.0",
     "ts-node": "^3.0.2",
     "ts-package-lint": "^0.2.2",
     "tslib": "^1.6.0",

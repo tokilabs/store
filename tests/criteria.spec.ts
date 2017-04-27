@@ -10,16 +10,16 @@ describe('Criteria class', () => {
     const query = new Query(new PetTable())
       .whereAll(
         f => f.gender.equals('male'),
-        f => f.birthday.before(new Date(2016, 1))
+        f => f.birthday.before(new Date(2016, 1, 1, 2, 0, 0))
       )
       .where(f => f.id, [2, 4, 6, 8])
       .whereAny(
         f => f.species.equals('cat'),
         f => f.species.equals('dog')
       );
-
+      
     expect(query.toString()).to.not.be.empty;
-    expect(query.toString().replace(/\s+/g, ' ').trim()).to.be.eql(
+    expect(query.toString().replace(/\s+/g, ' ').trim()).to.equals(
       'SELECT `birthday`, `breed`, `gender`, `id`, `species` ' +
       'FROM `pets` ' +
       "WHERE (`birthday` < '2016-02-01 02:00:00' AND `gender` = 'male') " +
