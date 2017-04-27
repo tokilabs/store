@@ -28,7 +28,9 @@
     "url": "git+ssh://git@github.com/cashfarm/store.git"
   },
   "keywords": [
-    "shiny"
+    "store",
+    "ORM",
+    "database"
   ],
   "dependencies": {
     "@cashfarm/lang": "^0.0.1",
@@ -38,11 +40,15 @@
   },
   "devDependencies": {
     "@types/chai": "^3.5.0",
+    "@types/debug": "^0.0.29",
     "@types/expect": "^1.20.1",
+    "@types/gulp": "^4.0.2",
+    "@types/gulp-util": "^3.0.31",
     "@types/lodash": "^4.14.62",
     "@types/mocha": "^2.2.40",
     "@types/mysql": "0.0.29",
     "@types/sinon": "^2.1.2",
+    "@types/source-map-support": "^0.2.28",
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-concat-filenames": "^1.2.0",
