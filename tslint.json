@@ -10,7 +10,23 @@
         "function-name": false,
         "missing-jsdoc": false,
         "no-relative-imports": false,
-
+        "array-type": [
+            false
+        ],
+        "prefer-array-literal": false,
+        "no-parameter-properties": false,
+        "member-access": [
+            "no-public"
+        ],
+        "unified-signatures": false,
+        "no-any": false,
+        "variable-name": [
+            "allow-leading-underscore",
+            "check-format",
+            "ban-keywords"
+        ],
+        "newline-before-return": false,
+        "no-reserved-keywords": false,
 
         "class-name": true,
         "comment-format": [true,
@@ -30,6 +46,9 @@
             "avoid-escape"
         ],
         "semicolon": [true, "always"],
+        "typedef": [
+            false
+        ],
         "whitespace": [true,
             "check-branch",
             "check-operator",

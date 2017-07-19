@@ -1,9 +1,9 @@
-import * as mysql from 'mysql';
 import { flatten } from 'lodash';
 
-import {ConditionGroup, Condition, OP} from '../../condition';
+import { ConditionGroup, Condition, OP } from '../../condition';
 import { CriteriaEnabled } from '../../criteria';
-import {Table} from '../../mapping';
+import { Table } from '../../mapping';
+import { format, prepareValue } from './util';
 
 export abstract class Whereable<TTable extends Table, TSubclass extends Whereable<TTable, TSubclass>> extends CriteriaEnabled<TTable, TSubclass> {
 
@@ -27,7 +27,7 @@ export abstract class Whereable<TTable extends Table, TSubclass extends Whereabl
       else
         c = curr as Condition;
 
-      return mysql.format(this.getOperatorTemplate(c.op), [c.field, c.value]);
+      return format(this.getOperatorTemplate(c.op), [c.field, prepareValue(c.value)]);
     })).join(` ${gp.operator} `) + ')';
   }
 
@@ -40,7 +40,7 @@ export abstract class Whereable<TTable extends Table, TSubclass extends Whereabl
           where.push(this.buildGroupCondition(c));
         }
         else if (c instanceof Condition) {
-          where.push(mysql.format(this.getOperatorTemplate(c.op), [c.field, c.value]));
+          where.push(format(this.getOperatorTemplate(c.op), [c.field, prepareValue(c.value)]));
         }
       });
 

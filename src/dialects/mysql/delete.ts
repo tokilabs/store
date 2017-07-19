@@ -12,7 +12,7 @@ export class Delete<TTable extends Table> extends Whereable<TTable, Delete<TTabl
 
   public toString(): string {
     return MySQL.format(
-      `DELETE FROM ?? WHERE ${this.buildWhere()}`,
+      `DELETE FROM ?? ${this.buildWhere()};`,
       [this.$table[TABLE_NAME]]);
   }
 }

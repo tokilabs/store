@@ -1,7 +1,8 @@
+import { OrderDirection } from '@cashfarm/lang/lib';
+
 import { CriteriaEnabled } from '../criteria';
-import {OrderDirection} from '@cashfarm/lang/lib';
-import {Table, Field} from '../mapping';
-import { FieldOrSelector, ConditionBuilder } from '../types';
+import { Field, Table } from '../mapping';
+import { FieldOrSelector } from '../types';
 
 export interface IQuery<TTable extends Table> extends CriteriaEnabled<TTable, IQuery<TTable>> {
 
@@ -25,7 +26,9 @@ export interface IQuery<TTable extends Table> extends CriteriaEnabled<TTable, IQ
    * @memberOf Query
    */
   orderBy(field: FieldOrSelector<TTable>, direction: OrderDirection): IQuery<TTable>;
-  orderBy(field: [FieldOrSelector<TTable>, OrderDirection], ...otherFields: Array<[FieldOrSelector<TTable>, OrderDirection]>): IQuery<TTable>;
+  orderBy(
+      field: [FieldOrSelector<TTable>, OrderDirection],
+      ...otherFields: Array<[FieldOrSelector<TTable>, OrderDirection]>): IQuery<TTable>;
 
   /**
    * Sets the list of grouping fields.
@@ -102,6 +105,6 @@ export interface IQuery<TTable extends Table> extends CriteriaEnabled<TTable, IQ
    * @memberOf Query
    */
   clearOffset(): IQuery<TTable>;
-}
 
-export default IQuery;
+  toString(): string;
+}

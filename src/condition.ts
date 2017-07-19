@@ -23,67 +23,8 @@ export const OP = {
  * Represents a single condition
  */
 export interface ICondition {
-  $eq?: any;
-  $ne?: any;
-  $gt?: any;
-  $gte?: any;
-  $lt?: any;
-  $lte?: any;
-  $in?: Array<any>;
-  $notIn?: Array<any>;
-  $like?: string;
-  $notLike?: string;
-  $isNull?: null;
-  $between?: Array<number>;
-  $notBetween?: Array<number>;
-
   and(cond: ICondition): ICondition;
   or(cond: ICondition): ICondition;
-
-  /**
-   * Value is equal to a column, with dialect specific column identifiers.
-   *
-   * e.g.: = `table`.`column_name` (mysql)
-   */
-  $col?: string;
-
-  // For PostGres
-
-  // /**
-  //  * [PG ONLY] Case insensitive version of "LIKE" operator
-  //  * @example ILIKE '%exam'
-  //  */
-  // $iLike: string;
-
-  // /**
-  //  * [PG ONLY] Case insensitive version of "NOT LIKE" operator
-  //  * @example NOT ILIKE '%exam'
-  //  */
-  // $notILike: string;
-
-  // /**
-  //  * [PG ONLY] Array overlap operator
-  //  * @example && [2, 4]
-  //  */
-  // $overlap: Array<number>;
-
-  // /**
-  //  * [PG ONLY] Array contains operator
-  //  * @example @> [2, 4]
-  //  */
-  // $contains: Array<number>;
-
-  // /**
-  //  * [PG ONLY] Array contained operator
-  //  * @example <@ [2, 4]
-  //  */
-  // $contained: Array<number>;
-
-  // /**
-  //  * [PG ONLY] Any Array operator
-  //  * @example ANY ARRAY[2, 4]::INTEGER
-  //  */
-  // $any: Array<number>;
 }
 
 /**
@@ -98,7 +39,7 @@ export interface ICondition {
  * @interface IConditionsMap
  */
 export interface IConditionsMap {
-  [field: string]: { [opKey: string]: any };// ICondition | string | number | Array<string | number>;
+  [field: string]: { [opKey: string]: any }; // ICondition | string | number | Array<string | number>;
 }
 
 export interface IConditionGroup {
@@ -131,14 +72,14 @@ export class ConditionGroup implements ICondition {
     }
 
   public and(cond: ICondition): ConditionGroup {
-    if (this.operator == 'AND')
+    if (this.operator === 'AND')
       return new ConditionGroup([...this.conditions, cond], this.operator);
 
     return new ConditionGroup([cond, new ConditionGroup(this.conditions, this.operator)], 'AND');
   }
 
   public or(cond: ICondition): ConditionGroup {
-    if (this.operator == 'OR')
+    if (this.operator === 'OR')
       return new ConditionGroup([...this.conditions, cond], this.operator);
 
     return new ConditionGroup([cond, new ConditionGroup(this.conditions, this.operator)], 'OR');

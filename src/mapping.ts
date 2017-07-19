@@ -137,24 +137,55 @@ export class BooleanField extends Field {
 }
 
 export class DateField extends Field {
+  before(date: string): ICondition;
+  before(date: number): ICondition;
+  before(date: Date): ICondition;
+  before(date: string|number|Date): ICondition {
+    if (typeof date === 'number')
+      return this.op(OP.LOWER, new Date(date));
 
-  private toDbDateString(date: Date) {
-    return date.toISOString().slice(0, 19).replace('T', ' ');
+    if (typeof date == 'string')
+      return this.op(OP.LOWER, new Date(date));
+
+    return this.op(OP.LOWER, date);
   }
 
-  before(date: Date): ICondition {
-    return this.op(OP.LOWER, this.toDbDateString(date));
+  after(date: string): ICondition;
+  after(date: number): ICondition;
+  after(date: Date): ICondition;
+  after(date: string|number|Date): ICondition {
+    if (typeof date === 'number')
+      return this.op(OP.GREATER, new Date(date));
+
+    if (typeof date == 'string')
+      return this.op(OP.GREATER, new Date(date));
+
+    return this.op(OP.GREATER, date);
   }
 
-  after(date: Date): ICondition {
-    return this.op(OP.GREATER, this.toDbDateString(date));
+  from(date: string): ICondition;
+  from(date: number): ICondition;
+  from(date: Date): ICondition;
+  from(date: string|number|Date): ICondition {
+    if (typeof date === 'number')
+      return this.op(OP.LOWER_OR_EQUAL, new Date(date));
+
+    if (typeof date == 'string')
+      return this.op(OP.LOWER_OR_EQUAL, new Date(date));
+
+    return this.op(OP.LOWER_OR_EQUAL, date);
   }
 
-  from(date: Date): ICondition {
-    return this.op(OP.LOWER_OR_EQUAL, this.toDbDateString(date));
-  }
+  until(date: string): ICondition;
+  until(date: number): ICondition;
+  until(date: Date): ICondition;
+  until(date: string|number|Date): ICondition {
+    if (typeof date === 'number')
+      return this.op(OP.GREATER_OR_EQUAL, new Date(date));
 
-  until(date: Date): ICondition {
-    return this.op(OP.GREATER_OR_EQUAL, this.toDbDateString(date));
+    if (typeof date == 'string')
+      return this.op(OP.GREATER_OR_EQUAL, new Date(date));
+
+    return this.op(OP.GREATER_OR_EQUAL, date);
   }
 }

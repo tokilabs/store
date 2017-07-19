@@ -1,9 +1,20 @@
 {
   // TS LINT
-
-  // An additional rules directory
-  "tslint.rulesDirectory": "./tools/tslint/",
-  // Configure glob patterns of file paths to exclude from linting
-  "tslint.exclude": "node_modules/**/*",
-  "typescript.tsdk": "./node_modules/typescript/lib"
+  "tslint.configFile": "tslint.json",
+  "tslint.enable": true,
+  "tslint.run": "onType",
+  "tslint.exclude": [
+    "node_modules/**/*",
+    "tests/**/*"
+  ],
+  "tslint.alwaysShowRuleFailuresAsWarnings": true,
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "lib/": true
+  }
 }

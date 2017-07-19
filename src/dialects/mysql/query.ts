@@ -1,12 +1,12 @@
 import * as MySQL from './util';
 
-import {OrderDirection} from '@cashfarm/lang/lib';
+import { OrderDirection } from '@cashfarm/lang/lib';
 
-import { FieldOrSelector } from '../../types';
+import { Field, Table } from '../../mapping';
 import { FIELDS, TABLE_NAME } from '../../symbols';
-import { Table, Field } from '../../mapping';
-import { Whereable } from './whereable';
+import { FieldOrSelector } from '../../types';
 import { IQuery } from '../iQuery';
+import { Whereable } from './whereable';
 
 import { sortBy } from 'lodash';
 
@@ -250,7 +250,7 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
       }${
         limit
       }${
-        offset}`.trim();
+        offset};`.replace(/\s+/g, ' ').trim();
   }
 
   private buildSelect(fields?: Field[]): string {
