@@ -1,7 +1,7 @@
 import { format as formatQuery, IConnection, IError, IPool } from 'mysql';
 import { Delete, Insert, Update } from './dialects/mysql';
 import { Store } from './store';
-import { DTO, PK, TABLE, TABLE_NAME } from './symbols';
+import { DTO, MAPPER, PK, TABLE, TABLE_NAME } from './symbols';
 import { CriteriaOrBuilder } from './types';
 
 import * as MySQL from './dialects/mysql';
@@ -217,6 +217,9 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
     if (Array.isArray(rows)) {
       return rows.map(r => this.mapResult(r));
     }
+
+    if (this[DTO][MAPPER])
+      return this[DTO][MAPPER](rows);
 
     const d = new this[DTO]();
 
