@@ -40,7 +40,6 @@
     "mysql": "^2.11.1"
   },
   "devDependencies": {
-    "@cashfarm/store": "file:./lib",
     "@types/chai": "^3.5.0",
     "@types/debug": "^0.0.29",
     "@types/expect": "^1.20.1",
