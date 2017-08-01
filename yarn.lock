@@ -2,20 +2,11 @@
 # yarn lockfile v1
 
 
-"@cashfarm/lang@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@cashfarm/lang/-/lang-0.0.1.tgz#3686b4ae9c91d48540720d0c4e056915f8765a74"
+"@cashfarm/lang@^0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@cashfarm/lang/-/lang-0.6.3.tgz#d3d976e87c70f73770a1bc3ff4e3194aecd0d290"
   dependencies:
-    gulp-util "^3.0.7"
-    node-uuid "^1.4.7"
-
-"@cashfarm/store@file:./lib":
-  version "0.1.0"
-  dependencies:
-    "@cashfarm/lang" "^0.0.1"
-    debug "^2.2.0"
-    lodash "^4.17.4"
-    mysql "^2.11.1"
+    uuid "^3.1.0"
 
 "@sindresorhus/df@^1.0.1":
   version "1.0.1"
@@ -2314,7 +2305,7 @@ node-status-codes@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/node-status-codes/-/node-status-codes-1.0.0.tgz#5ae5541d024645d32a58fcddc9ceecea7ae3ac2f"
 
-node-uuid@^1.4.7, node-uuid@~1.4.7:
+node-uuid@~1.4.7:
   version "1.4.8"
   resolved "https://registry.yarnpkg.com/node-uuid/-/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
 
@@ -3599,11 +3590,11 @@ typedoc@^0.5.10:
     typedoc-default-themes "^0.4.2"
     typescript "2.2.2"
 
-typescript@2.2.2, typescript@^2.0.3:
+typescript@2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.2.tgz#606022508479b55ffa368b58fee963a03dfd7b0c"
 
-typescript@^2.4.1:
+typescript@^2.0.3, typescript@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.1.tgz#c3ccb16ddaa0b2314de031e7e6fee89e5ba346bc"
 
@@ -3732,6 +3723,10 @@ util-extend@^1.0.1:
 uuid@^2.0.1:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-2.0.3.tgz#67e2e863797215530dff318e5bf9dcebfd47b21a"
+
+uuid@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
 
 v8flags@^2.0.11, v8flags@^2.0.2:
   version "2.0.12"

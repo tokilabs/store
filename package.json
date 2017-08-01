@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/store",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Library for easily defining and using your Read Model (as in DDD Read Model)",
   "author": "Saulo Vallory <saulo@cashfarm.tech>",
   "license": "MIT",
@@ -34,7 +34,7 @@
     "database"
   ],
   "dependencies": {
-    "@cashfarm/lang": "^0.0.1",
+    "@cashfarm/lang": "^0.6.3",
     "debug": "^2.2.0",
     "lodash": "^4.17.4",
     "mysql": "^2.11.1"

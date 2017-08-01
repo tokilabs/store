@@ -20,11 +20,8 @@
     "traceResolution": false,
     "pretty": true,
     "lib" : [
-      "es6"
-    ],
-    "types" : [
-      "node",
-      "mysql"
+      "es6",
+      "dom"
     ],
     "baseUrl": "." // required for paths
   },

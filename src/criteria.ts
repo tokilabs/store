@@ -1,4 +1,4 @@
-import { OrderDirection } from '@cashfarm/lang/lib';
+import { OrderDirection } from '@cashfarm/lang';
 import { Condition, ConditionGroup, ICondition, IConditionsMap, OP } from './condition';
 import { Field, Table } from './mapping';
 import { ConditionBuilder, FieldSelector } from './types';
