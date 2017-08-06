@@ -32,7 +32,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
   public find(queryOrBuilder: Types.QueryBuilder<TTable>, dtoMapper?: (rows: any[]) => TDto[]): Promise<TDto[]> {
     return this.runQuery(
       this.unwrap<IQuery<TTable>>(queryOrBuilder, this.newQuery)
-    ).then(dtoMapper || this.mapResult);
+    ).then((results) => dtoMapper ? dtoMapper(results) : this.mapResults(results));
   }
 
   public findOne(query: IQuery<TTable>): Promise<TDto>;
@@ -203,7 +203,19 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
   }
 
   /**
-   * Converts rows to DTOs
+   * Map many results returning an array
+   *
+   * @private
+   * @param {any[]} rows
+   * @returns {TDto[]}
+   * @memberof MysqlStore
+   */
+  private mapResults(rows: any[]): TDto[] {
+    return rows.map(r => this.mapResult(r));
+  }
+
+  /**
+   * Map a single result
    *
    * @private
    * @param {any[]} rows
@@ -212,12 +224,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
    * @memberOf MysqlStore
    */
   private mapResult(row: any): TDto;
-  private mapResult(rows: any[]): TDto[];
-  private mapResult(rows: any | any[]): TDto | TDto[] {
-    if (Array.isArray(rows)) {
-      return rows.map(r => this.mapResult(r));
-    }
-
+  private mapResult(rows: any): TDto {
     if (this[DTO][MAPPER])
       return this[DTO][MAPPER](rows);
 
