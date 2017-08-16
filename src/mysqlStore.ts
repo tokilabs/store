@@ -106,13 +106,13 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
       excludeFields: (string & keyof TTable)[]): Promise<IOkResult> {
     const update = this.unwrap(
                           criteriaOrBuilder,
-                          new Update<TTable, string & keyof TTable>(this[Store.TABLE], data, excludeFields));
+                          new Update<TTable, string & keyof TTable>(new this[Store.TABLE](), data, excludeFields));
 
     return this.runCommand(update.toString());
   }
 
   public delete(criteriaOrBuilder: CriteriaOrBuilder<TTable>): Promise<IOkResult> {
-    const cmd = this.unwrap(criteriaOrBuilder, new Delete<TTable>(this[Store.TABLE]));
+    const cmd = this.unwrap(criteriaOrBuilder, new Delete<TTable>(new this[Store.TABLE]()));
 
     return this.runCommand(cmd.toString());
   }
@@ -223,15 +223,14 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
    *
    * @memberOf MysqlStore
    */
-  private mapResult(row: any): TDto;
-  private mapResult(rows: any): TDto {
+  private mapResult(row: any): TDto {
     if (this[DTO][MAPPER])
-      return this[DTO][MAPPER](rows);
+      return this[DTO][MAPPER](row);
 
     const d = new this[DTO]();
 
-    Object.getOwnPropertyNames(rows).forEach(p => {
-      d[p] = rows[p];
+    Object.getOwnPropertyNames(row).forEach(p => {
+      d[p] = row[p];
     });
 
     return d;

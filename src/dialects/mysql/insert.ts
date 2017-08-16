@@ -23,6 +23,8 @@ export class Insert<TTable extends Table, TFieldKey extends string & keyof TTabl
         if (!this.$table[f])
           throw new Error(`Field ${f} does not exist in ${this.$table[TABLE_NAME]}`);
       });
+
+      this.excludeFields = excludeFields || [];
     }
 
   public toString(): string {

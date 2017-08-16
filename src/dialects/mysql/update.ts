@@ -1,8 +1,8 @@
 import * as util from './util';
 
 import { Field, Table } from '../../mapping';
-import { Whereable } from './whereable';
 import { FIELDS, PK, TABLE, TABLE_NAME } from '../../symbols';
+import { Whereable } from './whereable';
 
 export class Update<TTable extends Table, TFieldKey extends string & keyof TTable>
                 extends Whereable<TTable, Update<TTable, TFieldKey>> {
@@ -11,6 +11,8 @@ export class Update<TTable extends Table, TFieldKey extends string & keyof TTabl
     public data: { [key in TFieldKey]?: any; },
     public excludeFields: TFieldKey[] = []) {
       super($table);
+
+      this.excludeFields = excludeFields || [];
     }
 
   public toString(): string {
@@ -19,7 +21,7 @@ export class Update<TTable extends Table, TFieldKey extends string & keyof TTabl
 
     Object.getOwnPropertyNames(this.data).forEach( (f: TFieldKey) => {
       if (this.excludeFields.indexOf(f) < 0) {
-        const mappedField = (<any>this.$table[f]) as Field;
+        const mappedField = <Field> (<any>this.$table[f]);
         cols.push('?? = ?');
         values.push(mappedField.selectExpr);
         values.push(util.prepareValue(this.data[f]));

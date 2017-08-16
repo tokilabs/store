@@ -9,5 +9,7 @@ export * from './store';
 export * from './types';
 
 import * as mysql from './dialects/mysql';
-
 export const MySQL = mysql;
+
+import * as symbols from './symbols';
+export const Symbols = symbols;
