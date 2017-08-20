@@ -23,7 +23,7 @@ describe('Update class', () => {
     expect(update.toString()).to.be.equal(
       'UPDATE `pets` SET ' +
       "`species` = 'cat', `breed` = 'siamese', `birthday` = '2017-02-13 00:00:00', `gender` = 'male' " +
-      "WHERE `id` = 123;");
+      'WHERE `id` = 123;');
   });
 
 });

@@ -4,27 +4,55 @@ import { Field, Table } from '../../mapping';
 import { FIELDS, PK, TABLE, TABLE_NAME } from '../../symbols';
 import { Whereable } from './whereable';
 
-export class Update<TTable extends Table, TFieldKey extends string & keyof TTable>
-                extends Whereable<TTable, Update<TTable, TFieldKey>> {
-  constructor(
-    protected $table: TTable,
-    public data: { [key in TFieldKey]?: any; },
-    public excludeFields: TFieldKey[] = []) {
-      super($table);
+export class Update<TTable extends Table, TFieldKeys extends string & keyof TTable>
+                extends Whereable<TTable, Update<TTable, TFieldKeys>> {
 
-      this.excludeFields = excludeFields || [];
+  public excludeFields: TFieldKeys[];
+  public ignoreExtraProperties: boolean;
+
+  constructor(
+    table: TTable,
+    dto: { [key in TFieldKeys]?: any; },
+    ignoreExtraProperties?: boolean
+  );
+  constructor(
+    table: TTable,
+    dto: { [key in TFieldKeys]?: any; },
+    excludeFields?: TFieldKeys[]
+  );
+  constructor(
+    table: TTable,
+    public dto: { [key in TFieldKeys]?: any; },
+    excludeOrIgnore?: TFieldKeys[] | boolean,
+    ignoreExtraProperties?: boolean
+  ) {
+    super(table);
+
+    if (Array.isArray(excludeOrIgnore)) {
+      this.excludeFields = excludeOrIgnore || [];
+      this.ignoreExtraProperties = ignoreExtraProperties;
     }
+    else {
+      this.excludeFields = [];
+
+      this.ignoreExtraProperties = (typeof excludeOrIgnore === 'boolean') && excludeOrIgnore;
+    }
+  }
 
   public toString(): string {
     const cols: string[]  = [];
     const values: Array<string|number|boolean> = [];
 
-    Object.getOwnPropertyNames(this.data).forEach( (f: TFieldKey) => {
+    Object.getOwnPropertyNames(this.dto).forEach( (f: TFieldKeys) => {
       if (this.excludeFields.indexOf(f) < 0) {
         const mappedField = <Field> (<any>this.$table[f]);
+
+        if (!mappedField && !this.ignoreExtraProperties)
+          throw new Error(`No mapping defined in ${this.$table.constructor.name} for DTO property ${f}`);
+
         cols.push('?? = ?');
         values.push(mappedField.selectExpr);
-        values.push(util.prepareValue(this.data[f]));
+        values.push(util.prepareValue(this.dto[f]));
       }
     });
 
