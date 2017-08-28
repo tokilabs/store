@@ -46,13 +46,6 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
     super(table);
   }
 
-  private unwrap(field: FieldOrSelector<TTable>): Field {
-    if (typeof field === 'function')
-      return field(this.$table);
-
-    return field;
-  }
-
   /**
    * Defines the set of fields that will be selected from the table.
    *
@@ -226,17 +219,19 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
   public toString(): string {
     let orderBy = '';
     let groupBy = '';
-    const limit = this.Limit == null ? '' : 'LIMIT ' + this.Limit;
-    const offset = this.Offset == null ? '' : 'OFFSET ' + this.Offset;
+    const limit = this.Limit == null ? '' : `LIMIT ${this.Limit}`;
+    const offset = this.Offset == null ? '' : `OFFSET ${this.Offset}`;
 
     if (this.OrderBy) {
-      orderBy = 'ORDER BY ' + this.OrderBy.map<string>(
-        val => `${val.field} ${val.direction.toString()}`).join(', ');
+      orderBy = `ORDER BY ${
+        this.OrderBy.map<string>(
+          val => `${val.field} ${val.direction.toString()}`
+        ).join(', ')}`;
     }
 
     if (this.GroupBy) {
-      groupBy = 'GROUP BY ' + this.GroupBy.map<string>(
-        val => `${val}`).join(', ');
+      groupBy = `GROUP BY ${
+        this.GroupBy.map<string>(val => `${val}`).join(', ')}`;
     }
 
     return `${
@@ -272,5 +267,12 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
     });
 
     return `SELECT ${expr.join(', ')}`;
+  }
+
+  private unwrap(field: FieldOrSelector<TTable>): Field {
+    if (typeof field === 'function')
+      return field(this.$table);
+
+    return field;
   }
 }

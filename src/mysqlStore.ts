@@ -103,7 +103,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
   public update(
       data: { [key in keyof TTable]?: any },
       criteriaOrBuilder: CriteriaOrBuilder<TTable>,
-      excludeFields: (string & keyof TTable)[]): Promise<IOkResult> {
+      excludeFields: (string & keyof TTable)[] = []): Promise<IOkResult> {
     const update = this.unwrap(
                           criteriaOrBuilder,
                           new Update<TTable, string & keyof TTable>(new this[Store.TABLE](), data, excludeFields));
