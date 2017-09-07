@@ -68,6 +68,7 @@
         "no-null-keyword": false,
         "no-unused-variable": true,
         "prefer-const": true,
-        "no-increment-decrement": true
+        "no-increment-decrement": true,
+        "no-unnecessary-override": false
     }
 }

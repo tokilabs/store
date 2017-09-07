@@ -2,7 +2,7 @@ import * as MySQL from './util';
 
 import { OrderDirection } from '@cashfarm/lang/lib';
 
-import { Field, Table } from '../../mapping';
+import { Field, Table, IField } from '../../mapping';
 import { FIELDS, TABLE_NAME } from '../../symbols';
 import { FieldOrSelector } from '../../types';
 import { IQuery } from '../iQuery';
@@ -248,12 +248,12 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
         offset};`.replace(/\s+/g, ' ').trim();
   }
 
-  private buildSelect(fields?: Field[]): string {
-    let fieldSource: Set<Field>;
+  private buildSelect(fields?: IField[]): string {
+    let fieldSource: Set<IField>;
     const expr: string[] = [];
 
     if (fields && fields.length) {
-      fieldSource = new Set<Field>(fields);
+      fieldSource = new Set<IField>(fields);
     }
     if (this.Select && this.Select.size) {
       fieldSource = this.Select;
@@ -262,8 +262,8 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
       fieldSource = this.$table[FIELDS];
     }
 
-    sortBy(Array.from(fieldSource), f => f.selectExpr).forEach( (field: Field) => {
-      expr.push(MySQL.format(`??${field.alias ? ' as ??' : ''}`, [field.selectExpr, field.alias]));
+    sortBy(Array.from(fieldSource), f => f.selectExpr).forEach( (field: IField) => {
+      expr.push(MySQL.format(`${field.selectExpr}${field.alias ? ' as ??' : ''}`, [field.alias]));
     });
 
     return `SELECT ${expr.join(', ')}`;

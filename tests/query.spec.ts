@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { format as formatQuery } from 'mysql';
 
+import { Condition, ConditionGroup, Criteria, OP } from '@cashfarm/store';
 import { Delete, Insert, Query, Update } from '@cashfarm/store/mysql';
 import { PK } from '@cashfarm/store/symbols';
-import { Condition, ConditionGroup, Criteria, OP } from '../lib';
 import { PetsTable } from './fixtures/pets';
 
 let isFemale: Condition;
@@ -32,7 +32,7 @@ describe('Query class', () => {
       );
 
     expect(query.toString()).to.equals(
-      'SELECT `birthday`, `breed`, `gender`, `id`, `species` ' +
+      'SELECT birthday, breed, gender, id, species ' +
       'FROM `pets` ' +
       "WHERE (`birthday` < '2016-02-01 02:00:00' AND `gender` = 'male') " +
         'AND `id` IN (2, 4, 6, 8) ' +

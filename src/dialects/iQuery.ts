@@ -1,7 +1,7 @@
 import { OrderDirection } from '@cashfarm/lang/lib';
 
 import { CriteriaEnabled } from '../criteria';
-import { Field, Table } from '../mapping';
+import { Field, Table, IField } from '../mapping';
 import { FieldOrSelector } from '../types';
 
 export interface IQuery<TTable extends Table> extends CriteriaEnabled<TTable, IQuery<TTable>> {
@@ -14,7 +14,7 @@ export interface IQuery<TTable extends Table> extends CriteriaEnabled<TTable, IQ
    *
    * @memberOf Criteria
    */
-  select(fieldListSelector: (table: TTable) => Field[]): IQuery<TTable>;
+  select(fieldListSelector: (table: TTable) => IField[]): IQuery<TTable>;
 
   /**
    * Appends `field` to the list of ordering fields.

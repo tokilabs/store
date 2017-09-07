@@ -27,12 +27,7 @@
       "node",
       "mocha",
       "expect"
-    ],
-    "paths": {
-      "@cashfarm/store": ["../lib"], // write tests without relative paths
-      "@cashfarm/store/mysql": ["../lib/mysql"],
-      "@cashfarm/store/symbols": ["../lib/symbols"]
-    }
+    ]
   },
   "include": [
     "./**/*.ts"

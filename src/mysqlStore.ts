@@ -1,5 +1,5 @@
 import { format as formatQuery, IConnection, IError, IPool } from 'mysql';
-import { Delete, Insert, Update } from './dialects/mysql';
+import { Delete, Insert, Update, Query } from './dialects/mysql';
 import { Store } from './store';
 import { DTO, MAPPER, PK, TABLE, TABLE_NAME } from './symbols';
 import { CriteriaOrBuilder } from './types';
@@ -21,23 +21,19 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
     super();
   }
 
-  public get criteria(): Criteria<TTable> {
-    return new Criteria<TTable>(this[Store.TABLE]);
-  }
-
-  private get newQuery(): IQuery<TTable> {
+  protected get newQuery(): IQuery<TTable> {
     return new MySQL.Query(new this[Store.TABLE]());
   }
 
-  public find(queryOrBuilder: Types.QueryBuilder<TTable>, dtoMapper?: (rows: any[]) => TDto[]): Promise<TDto[]> {
+  protected find(queryOrBuilder: Types.QueryBuilder<TTable>, dtoMapper?: (rows: any[]) => TDto[]): Promise<TDto[]> {
     return this.runQuery(
       this.unwrap<IQuery<TTable>>(queryOrBuilder, this.newQuery)
     ).then((results) => dtoMapper ? dtoMapper(results) : this.mapResults(results));
   }
 
-  public findOne(query: IQuery<TTable>): Promise<TDto>;
-  public findOne(query: Types.QueryBuilder<TTable>): Promise<TDto>;
-  public findOne(queryOrBuilder: Types.QueryOrBuilder<TTable>): Promise<TDto> {
+  protected findOne(query: IQuery<TTable>): Promise<TDto>;
+  protected findOne(query: Types.QueryBuilder<TTable>): Promise<TDto>;
+  protected findOne(queryOrBuilder: Types.QueryOrBuilder<TTable>): Promise<TDto> {
     const query = this.unwrap<IQuery<TTable>>(queryOrBuilder, this.newQuery);
 
     debug('.findOne()');
@@ -52,16 +48,48 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
   }
 
   /**
-   * Returns the `value` field of the first returned row
+   * Select a single field or expression and return its value
+   *
+   * @protected
+   * @template TScalar
+   * @param {string} expression A select expression. E.g. "COUNT(id)"
+   * @param {TScalar} [defaultValue] The value to return if result is null or undefined
+   * @returns {Promise<TScalar>}
+   * @memberof MysqlStore
    */
-  public compute<TScalar>(queryOrBuilder: Types.QueryOrBuilder<TTable>, defaultValue: any = null): Promise<TScalar> {
-    const query = this.unwrap<IQuery<TTable>>(queryOrBuilder, this.newQuery);
+  protected compute<TScalar>(expression: string, defaultValue?: TScalar): Promise<TScalar>;
+  /**
+   * Select a single field or expression and return its value
+   *
+   * @protected
+   * @template TScalar
+   * @param {Types.QueryOrBuilder<TTable>} queryOrBuilder A query or a query builder function. E.g. `t => t.id`
+   * @param {TScalar} [defaultValue] The value to return if result is null or undefined
+   * @returns {Promise<TScalar>}
+   * @memberof MysqlStore
+   */
+  protected compute<TScalar>(queryOrBuilder: Types.QueryOrBuilder<TTable>, defaultValue?: TScalar): Promise<TScalar>;
+  protected compute<TScalar>(expression: string | Types.QueryOrBuilder<TTable>, defaultValue: TScalar = null): Promise<TScalar> {
+    let query: Query<TTable> = null;
+
+    if (typeof expression === 'string')
+      query = <Query<TTable>> this.newQuery.select(t => [{ selectExpr: expression, alias: 'value' }]);
+    else {
+      query = <Query<TTable>> this.unwrap<IQuery<TTable>>(expression, this.newQuery);
+
+      if (query.Select.size !== 1) {
+        throw new Error('When using compute method you must select exactly one field or expression');
+      }
+
+      // override alias
+      query.Select.values().next().value.alias = 'value';
+    }
 
     debug('compute:', query);
     return this.runQuery(query)
       .then<TScalar>( (result: any[]) => {
 
-        debug('compute result:', query);
+        debug('Compute result:', result);
         if (result.length) {
           return result[0].value;
         }
@@ -70,7 +98,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
       });
   }
 
-  public create(obj: TDto): Promise<TDto> {
+  protected create(obj: TDto): Promise<TDto> {
     const insert = new Insert(new this[Store.TABLE](), obj);
     debug(insert.toString());
 
@@ -100,7 +128,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
       });
   }
 
-  public update(
+  protected update(
       data: { [key in keyof TTable]?: any },
       criteriaOrBuilder: CriteriaOrBuilder<TTable>,
       excludeFields: (string & keyof TTable)[] = []): Promise<IOkResult> {
@@ -111,10 +139,34 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
     return this.runCommand(update.toString());
   }
 
-  public delete(criteriaOrBuilder: CriteriaOrBuilder<TTable>): Promise<IOkResult> {
+  protected delete(criteriaOrBuilder: CriteriaOrBuilder<TTable>): Promise<IOkResult> {
     const cmd = this.unwrap(criteriaOrBuilder, new Delete<TTable>(new this[Store.TABLE]()));
 
     return this.runCommand(cmd.toString());
+  }
+
+  protected runCommand(command: string): Promise<any> {
+    return new Promise<any[]>( (resolve, reject) => {
+      this.db.getConnection((connErr: Error, conn: IConnection) => {
+        if (connErr) {
+          reject(connErr);
+          return;
+        }
+
+        debug(`Command query: ${command.toString()}`);
+        conn.query(command.toString(), (queryErr: IError, result: any[]) => {
+          if (queryErr) {
+            conn.release();
+            queryErr.message += ` Query: ${command.toString()}`;
+            return reject(queryErr);
+          }
+
+          debug('Command result:', result);
+          conn.release();
+          resolve(result);
+        });
+      });
+    });
   }
 
   private isOkResult(res: any): boolean {
@@ -153,6 +205,11 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
           conn.commit(reject);
           conn.release();
           resolve(results);
+        })
+        .catch(err => {
+          conn.rollback(reject);
+          conn.release();
+          reject(err);
         });
       });
     });
@@ -175,28 +232,6 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
 
           conn.release();
           resolve(rows);
-        });
-      });
-    });
-  }
-
-  private runCommand(command: string): Promise<any> {
-    return new Promise<any[]>( (resolve, reject) => {
-      this.db.getConnection((connErr: Error, conn: IConnection) => {
-        if (connErr) {
-          reject(connErr);
-          return;
-        }
-
-        debug(command.toString());
-        conn.query(command.toString(), (queryErr: IError, result: any[]) => {
-          if (queryErr) {
-            conn.release();
-            return reject(queryErr);
-          }
-
-          conn.release();
-          resolve(result);
         });
       });
     });

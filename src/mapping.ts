@@ -1,10 +1,5 @@
-import { ICondition } from './condition';
-import { OP, Condition } from './condition';
+import { Condition, ICondition, OP } from './condition';
 import { FIELDS } from './symbols';
-
-// export interface IFieldMap {
-//   [fieldName: string]: Field;
-// }
 
 const _fieldMap = Symbol('field_map');
 
@@ -30,7 +25,7 @@ export abstract class Table {
 
     Object.keys(this).forEach(p => {
       if (this[p] instanceof Field) {
-        if (this[p].selectExpr != p)
+        if (this[p].selectExpr !== p)
           this[p].alias = p;
 
         set.add(this[p]);
@@ -47,6 +42,7 @@ export abstract class Table {
 
 export interface IField {
   selectExpr: string;
+  alias?: string;
 }
 
 export class Field implements IField {
@@ -59,10 +55,6 @@ export class Field implements IField {
 
     this.selectExpr = selectExpr;
     this.alias = alias;
-  }
-
-  protected op(op: string, value: any): ICondition {
-    return new Condition(this.selectExpr, op, value);
   }
 
   public toString() {
@@ -87,6 +79,10 @@ export class Field implements IField {
 
   isNull(): ICondition {
     return this.op(OP.IS, null);
+  }
+
+  protected op(op: string, value: any): ICondition {
+    return new Condition(this.selectExpr, op, value);
   }
 }
 

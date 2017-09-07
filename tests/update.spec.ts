@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import { format as formatQuery } from 'mysql';
 
-import { Condition, ConditionGroup, Criteria, OP } from '../lib';
-import { PetsTable } from './fixtures/pets';
-import { Query, Insert, Update, Delete } from '@cashfarm/store/mysql';
+import { Condition, ConditionGroup, Criteria, OP } from '@cashfarm/store';
+import { Delete, Insert, Query, Update } from '@cashfarm/store/mysql';
 import { PK } from '@cashfarm/store/symbols';
+import { PetsTable } from './fixtures/pets';
 
 describe('Update class', () => {
 

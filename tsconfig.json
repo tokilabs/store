@@ -7,7 +7,7 @@
     "rootDir": "src",
     "module": "commonjs",
     "noImplicitAny": true,
-    "removeComments": true,
+    "removeComments": false,
     "preserveConstEnums": true,
     "declaration": true,
     "sourceMap": true,
