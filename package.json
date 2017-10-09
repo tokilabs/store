@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/store",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Library for easily defining and using your Read Model (as in DDD Read Model)",
   "author": "Saulo Vallory <saulo@cashfarm.tech>",
   "license": "MIT",
@@ -59,7 +59,6 @@
     "gulp-util": "^3.0.7",
     "gulpclass": "^0.1.1",
     "mocha": "2",
-    "nyc": "^10.2.0",
     "publish": "^0.6.0",
     "sinon": "^2.1.0",
     "source-map-support": "^0.4.2",

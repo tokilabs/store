@@ -125,7 +125,7 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
       fieldArr = [fields];
     }
 
-    this._groupBy = fieldArr.map(f => typeof f == 'function' ? f(this.$table) : f);
+    this._groupBy = fieldArr.map(f => typeof f === 'function' ? f(this.$table) : f);
 
     return this;
   }
@@ -234,18 +234,20 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
         this.GroupBy.map<string>(val => `${val}`).join(', ')}`;
     }
 
+    // tslint:disable-next-line:prefer-template
     return `${
         this.buildSelect()
       } FROM \`${this.$table[TABLE_NAME]}\` ${
         this.buildWhere()
-      }${
+      } ${
         groupBy
-      }${
+      } ${
         orderBy
-      }${
+      } ${
         limit
-      }${
-        offset};`.replace(/\s+/g, ' ').trim();
+      } ${
+        offset}`
+      .replace(/\s+/g, ' ').trim() + ';';
   }
 
   private buildSelect(fields?: IField[]): string {

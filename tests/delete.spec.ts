@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { format as formatQuery } from 'mysql';
 
+import { Condition, ConditionGroup, Criteria, OP } from '@cashfarm/store';
 import { Delete, Insert, Query, Update } from '@cashfarm/store/mysql';
 import { PK } from '@cashfarm/store/symbols';
-import { Condition, ConditionGroup, Criteria, OP } from '@cashfarm/store';
 import { PetsTable } from './fixtures/pets';
 
 describe('Delete class', () => {
