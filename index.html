@@ -1,0 +1,382 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@cashfarm/store</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@cashfarm/store</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> @cashfarm/store</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="cashfarm-store">CashFarm Store</h1>
+				<h2 id="goal">Goal</h2>
+				<p>To have a <strong>simple</strong> to library for managing the Read Models.  The kind we use when we want
+				to store projections of events used in CQRS/ES arquitectures.</p>
+				<p>The goal of this library is to facilitate <strong>simple</strong> queries against a relational database.
+				It was designed from start with denormalized tables in mind.</p>
+				<h2 id="api">API</h2>
+				<h3 id="store">Store</h3>
+				<p>The Store class represents a set of objects that can be stored and queried. It&#39;s NOT your entity
+				repository (as in a DDD).</p>
+				<h3 id="table">Table</h3>
+				<p>Table child classes is how you map a DB table. To create a store you&#39;ll have to extend the Table class,
+				define the database table name, fields and primary key.</p>
+				<h3 id="criteria">Criteria</h3>
+				<p>A class which reads the table definition and allows you to construct queries against it.</p>
+				<h2 id="example">Example</h2>
+				<pre><code class="lang-typescript">
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> Pet {
+  <span class="hljs-keyword">public</span> id: <span class="hljs-built_in">number</span>;
+  <span class="hljs-keyword">public</span> breed: <span class="hljs-built_in">string</span>;
+  <span class="hljs-keyword">public</span> birthday: <span class="hljs-built_in">Date</span>;
+  <span class="hljs-keyword">public</span> gender: <span class="hljs-built_in">string</span>;
+  <span class="hljs-keyword">public</span> species: <span class="hljs-built_in">string</span>;
+}
+
+<span class="hljs-meta">@TableName</span>(<span class="hljs-string">'pets'</span>)
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> PetsTable <span class="hljs-keyword">extends</span> Table {
+  <span class="hljs-meta">@PK</span>()
+  id = <span class="hljs-keyword">new</span> NumberField(<span class="hljs-string">'id'</span>);
+  species = <span class="hljs-keyword">new</span> StringField(<span class="hljs-string">'species'</span>);
+  breed = <span class="hljs-keyword">new</span> StringField(<span class="hljs-string">'breed'</span>);
+  birthday = <span class="hljs-keyword">new</span> DateField(<span class="hljs-string">'birthday'</span>);
+  gender = <span class="hljs-keyword">new</span> StringField(<span class="hljs-string">'gender'</span>);
+}
+
+<span class="hljs-meta">@DtoClass</span>(Pet)
+<span class="hljs-meta">@TableClass</span>(PetsTable)
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> PetStore <span class="hljs-keyword">extends</span> MysqlStore&lt;PetsTable, Pet&gt; {
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">super</span>({} <span class="hljs-keyword">as</span> IPool);
+  }
+
+  <span class="hljs-keyword">public</span> allCats(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">Array</span>&lt;Pet&gt;&gt; {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.find(<span class="hljs-function"><span class="hljs-params">query</span> =&gt;</span>
+      query.where(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> p.species.equals(<span class="hljs-string">'cat'</span>))
+    );
+  }
+
+  <span class="hljs-keyword">public</span> oneYearPetsAndAllDogs(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">Array</span>&lt;Pet&gt;&gt; {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.find(<span class="hljs-function"><span class="hljs-params">q</span> =&gt;</span> q
+      .select(<span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> [f.birthday, f.gender])
+      .where(<span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.species.equals(<span class="hljs-string">'cat'</span>))
+      .groupBy([<span class="hljs-keyword">this</span>[Sym.TABLE][<span class="hljs-string">'species'</span>], <span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.gender])
+      .orderBy(<span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.breed, OrderDirection.Asc)
+      .orderBy(<span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.birthday, OrderDirection.Desc)
+      .limit(<span class="hljs-number">10</span>)
+    );
+  }
+}
+
+<span class="hljs-keyword">const</span> query = <span class="hljs-keyword">new</span> Query(<span class="hljs-keyword">new</span> PetsTable())
+      .whereAll(
+        <span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.gender.equals(<span class="hljs-string">'male'</span>),
+        <span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.birthday.before(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">2016</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>))
+      )
+      .where(<span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.id, [<span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>, <span class="hljs-number">8</span>])
+      .whereAny(
+        <span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.species.equals(<span class="hljs-string">'cat'</span>),
+        <span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> f.species.equals(<span class="hljs-string">'dog'</span>)
+      );
+</code></pre>
+				<h2 id="development">Development</h2>
+				<ol>
+					<li>Install yarn if you didn&#39;t yet (<code>npm i -g yarn</code>)</li>
+					<li>Clone the repository</li>
+					<li>From the root of the project run <code>yarn setup:dev</code> (or <code>npm run setup:dev</code>)</li>
+				</ol>
+				<p>Profit!</p>
+				<p>To continuously compile and run tests simply run <code>yarn test:watch</code></p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/booleanfield.html" class="tsd-kind-icon">Boolean<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/condition.html" class="tsd-kind-icon">Condition</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/conditiongroup.html" class="tsd-kind-icon">Condition<wbr>Group</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/criteria.html" class="tsd-kind-icon">Criteria</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/criteriaenabled.html" class="tsd-kind-icon">Criteria<wbr>Enabled</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/datefield.html" class="tsd-kind-icon">Date<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/delete.html" class="tsd-kind-icon">Delete</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/field.html" class="tsd-kind-icon">Field</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/insert.html" class="tsd-kind-icon">Insert</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/mysqlstore.html" class="tsd-kind-icon">Mysql<wbr>Store</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/numberfield.html" class="tsd-kind-icon">Number<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/primerykeyfieldnotdefined.html" class="tsd-kind-icon">Primery<wbr>Key<wbr>Field<wbr>Not<wbr>Defined</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/query.html" class="tsd-kind-icon">Query</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/store.html" class="tsd-kind-icon">Store</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/stringfield.html" class="tsd-kind-icon">String<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/table.html" class="tsd-kind-icon">Table</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/update.html" class="tsd-kind-icon">Update</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/whereable.html" class="tsd-kind-icon">Whereable</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/icondition.html" class="tsd-kind-icon">ICondition</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iconditiongroup.html" class="tsd-kind-icon">ICondition<wbr>Group</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iconditionsmap.html" class="tsd-kind-icon">IConditions<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ifield.html" class="tsd-kind-icon">IField</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iokresult.html" class="tsd-kind-icon">IOk<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iorderbycriteria.html" class="tsd-kind-icon">IOrder<wbr>ByCriteria</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/iquery.html" class="tsd-kind-icon">IQuery</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/istore.html" class="tsd-kind-icon">IStore</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#conditionbuilder" class="tsd-kind-icon">Condition<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#conditionormapper" class="tsd-kind-icon">Condition<wbr>OrMapper</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#criteriabuilder" class="tsd-kind-icon">Criteria<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#criteriaorbuilder" class="tsd-kind-icon">Criteria<wbr>OrBuilder</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#fieldorselector" class="tsd-kind-icon">Field<wbr>OrSelector</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#fieldselector" class="tsd-kind-icon">Field<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#querybuilder" class="tsd-kind-icon">Query<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#queryorbuilder" class="tsd-kind-icon">Query<wbr>OrBuilder</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#dto" class="tsd-kind-icon">DTO</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#fields" class="tsd-kind-icon">FIELDS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#mysql" class="tsd-kind-icon">MySQL</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#pk" class="tsd-kind-icon">PK</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#table" class="tsd-kind-icon">TABLE</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#table_name" class="tsd-kind-icon">TABLE_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#_fieldmap" class="tsd-kind-icon">_field<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#debug" class="tsd-kind-icon">debug</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#dtoclass" class="tsd-kind-icon">Dto<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#tableclass" class="tsd-kind-icon">Table<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#tablename" class="tsd-kind-icon">Table<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getobjectclass" class="tsd-kind-icon">get<wbr>Object<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#gettypename" class="tsd-kind-icon">get<wbr>Type<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#is" class="tsd-kind-icon">is</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#placeholders" class="tsd-kind-icon">placeholders</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#preparevalue" class="tsd-kind-icon">prepare<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#op" class="tsd-kind-icon">OP</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
