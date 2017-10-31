@@ -1,5 +1,6 @@
+import { injectable, unmanaged } from 'inversify';
 import { format as formatQuery, IConnection, IError, IPool } from 'mysql';
-import { Delete, Insert, Update, Query } from './dialects/mysql';
+import { Delete, Insert, Query, Update } from './dialects/mysql';
 import { Store } from './store';
 import { DTO, MAPPER, PK, TABLE, TABLE_NAME } from './symbols';
 import { CriteriaOrBuilder } from './types';
@@ -15,9 +16,10 @@ import { IOkResult } from './okResult';
 import * as Debug from 'debug';
 const debug = Debug('store');
 
+@injectable()
 export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
 
-  constructor(protected db: IPool) {
+  constructor(@unmanaged() protected db: IPool) {
     super();
   }
 

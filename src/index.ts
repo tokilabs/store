@@ -1,3 +1,6 @@
+// tslint:disable-next-line:no-import-side-effect
+import 'reflect-metadata';
+
 export * from './condition';
 export * from './criteria';
 export * from './decorators';

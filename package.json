@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/store",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Library for easily defining and using your Read Model (as in DDD Read Model)",
   "author": "Saulo Vallory <saulo@cashfarm.tech>",
   "license": "MIT",
@@ -14,8 +14,10 @@
     "setup:dev": "yarn install && mkdir -p node_modules/@cashfarm && ln -sf ../../lib node_modules/@cashfarm/store",
     "build": "yarn run clean && yarn lint && yarn test && yarn tsc && yarn lint:pkg",
     "clean": "trash ./lib",
-    "docs": "./node_modules/.bin/typedoc --out ./docs --target es6 --mode file --ignoreCompilerErrors",
-    "docs:publish": "./node_modules/.bin/gh-pages -d docs",
+    "docs": "yarn docs:html && opn docs/index.html",
+    "docs:html": "typedoc src/index.ts --excludePrivate --mode file --theme minimal --out docs",
+    "docs:json": "typedoc --mode file --json docs/typedoc.json src/index.ts",
+    "docs:publish": "yarn docs:html && gh-pages -d docs",
     "lint": "tslint --project ./tsconfig.json -c ./tslint.json --type-check",
     "lint:pkg": "ts-package-lint",
     "mocha": "../node_modules/.bin/mocha",
@@ -37,8 +39,10 @@
   "dependencies": {
     "@cashfarm/lang": "^0.6.3",
     "debug": "^2.2.0",
+    "inversify": "^4.4.0",
     "lodash": "^4.17.4",
-    "mysql": "^2.11.1"
+    "mysql": "^2.11.1",
+    "reflect-metadata": "^0.1.10"
   },
   "devDependencies": {
     "@types/chai": "^3.5.0",
@@ -53,12 +57,14 @@
     "@types/source-map-support": "^0.2.28",
     "chai": "^3.5.0",
     "concurrently": "^3.5.0",
+    "gh-pages": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-concat-filenames": "^1.2.0",
     "gulp-folders": "^1.1.0",
     "gulp-util": "^3.0.7",
     "gulpclass": "^0.1.1",
     "mocha": "2",
+    "opn": "^5.1.0",
     "publish": "^0.6.0",
     "sinon": "^2.1.0",
     "source-map-support": "^0.4.2",
