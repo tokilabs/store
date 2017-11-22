@@ -1,33 +1,37 @@
 import { injectable, unmanaged } from 'inversify';
-import { format as formatQuery, IConnection, IError, IPool } from 'mysql';
-import { Delete, Insert, Query, Update } from './dialects/mysql';
-import { Store } from './store';
-import { DTO, MAPPER, PK, TABLE, TABLE_NAME } from './symbols';
-import { CriteriaOrBuilder } from './types';
+import { MysqlError, Pool, PoolConnection } from 'mysql';
 
-import * as MySQL from './dialects/mysql';
-import * as Types from './types';
+import { Criteria } from '../../criteria';
+import { Table } from '../../mapping';
+import { IOkResult } from '../../okResult';
+import { Store } from '../../store';
+import { DTO, MAPPER, PK, TABLE, TABLE_NAME } from '../../symbols';
+import * as Types from '../../types';
+import { IQuery } from '../iQuery';
 
-import { Criteria } from './criteria';
-import { IQuery } from './dialects/iQuery';
-import { Table } from './mapping';
-import { IOkResult } from './okResult';
+import { Delete } from './delete';
+import { Insert } from './insert';
+import { Query } from './query';
+import { Update } from './update';
 
 import * as Debug from 'debug';
+
 const debug = Debug('store');
 
 @injectable()
 export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
 
-  constructor(@unmanaged() protected db: IPool) {
+  constructor(@unmanaged() protected db: Pool) {
     super();
   }
 
   protected get newQuery(): IQuery<TTable> {
-    return new MySQL.Query(new this[Store.TABLE]());
+    return new Query(new this[Store.TABLE]());
   }
 
-  protected find(queryOrBuilder: Types.QueryBuilder<TTable>, dtoMapper?: (rows: any[]) => TDto[]): Promise<TDto[]> {
+  protected find(queryOrBuilder?: Types.QueryBuilder<TTable>, dtoMapper?: (rows: any[]) => TDto[]): Promise<TDto[]> {
+    queryOrBuilder = queryOrBuilder || (q => q);
+
     return this.runQuery(
       this.unwrap<IQuery<TTable>>(queryOrBuilder, this.newQuery)
     ).then((results) => dtoMapper ? dtoMapper(results) : this.mapResults(results));
@@ -132,7 +136,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
 
   protected update(
       data: { [key in keyof TTable]?: any },
-      criteriaOrBuilder: CriteriaOrBuilder<TTable>,
+      criteriaOrBuilder: Types.CriteriaOrBuilder<TTable>,
       excludeFields: (string & keyof TTable)[] = []): Promise<IOkResult> {
     const update = this.unwrap(
                           criteriaOrBuilder,
@@ -141,7 +145,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
     return this.runCommand(update.toString());
   }
 
-  protected delete(criteriaOrBuilder: CriteriaOrBuilder<TTable>): Promise<IOkResult> {
+  protected delete(criteriaOrBuilder: Types.CriteriaOrBuilder<TTable>): Promise<IOkResult> {
     const cmd = this.unwrap(criteriaOrBuilder, new Delete<TTable>(new this[Store.TABLE]()));
 
     return this.runCommand(cmd.toString());
@@ -149,14 +153,14 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
 
   protected runCommand(command: string): Promise<any> {
     return new Promise<any[]>( (resolve, reject) => {
-      this.db.getConnection((connErr: Error, conn: IConnection) => {
+      this.db.getConnection((connErr: Error, conn: PoolConnection) => {
         if (connErr) {
           reject(connErr);
           return;
         }
 
         debug(`Command query: ${command.toString()}`);
-        conn.query(command.toString(), (queryErr: IError, result: any[]) => {
+        conn.query(command.toString(), (queryErr: MysqlError, result: any[]) => {
           if (queryErr) {
             conn.release();
             queryErr.message += ` Query: ${command.toString()}`;
@@ -177,7 +181,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
 
   private trx(commands: string[]): Promise<any[]> {
     return new Promise<any[]>( (resolve, reject) => {
-      this.db.getConnection((connErr: Error, conn: IConnection) => {
+      this.db.getConnection((connErr: Error, conn: PoolConnection) => {
         if (connErr) {
           reject(connErr);
           return;
@@ -192,7 +196,7 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
 
         return Promise.all(
           commands.map(c => new Promise( (res, rej) => {
-            conn.query(c.toString(), (queryErr: IError, result: any[]) => {
+            conn.query(c.toString(), (queryErr: MysqlError, result: any[]) => {
               if (queryErr) {
                 conn.release();
                 console.error(queryErr);
@@ -219,14 +223,14 @@ export abstract class MysqlStore<TTable extends Table, TDto> extends Store {
 
   private runQuery(query: IQuery<TTable>): Promise<any[]> {
     return new Promise<any[]>( (resolve, reject) => {
-      this.db.getConnection((connErr: Error, conn: IConnection) => {
+      this.db.getConnection((connErr: Error, conn: PoolConnection) => {
         if (connErr) {
           reject(connErr);
           return;
         }
 
         debug(query.toString());
-        conn.query(query.toString(), (queryErr: IError, rows: any[]) => {
+        conn.query(query.toString(), (queryErr: MysqlError, rows: any[]) => {
           if (queryErr) {
             conn.release();
             return reject(queryErr);
