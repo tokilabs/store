@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/store",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Library for easily defining and using your Read Model (as in DDD Read Model)",
   "author": "Saulo Vallory <saulo@cashfarm.tech>",
   "license": "MIT",

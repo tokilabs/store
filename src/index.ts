@@ -12,6 +12,7 @@ export * from './types';
 
 import * as _mysql from './dialects/mysql';
 export const mysql = _mysql;
+export * from './dialects/mysql/store';
 
 import * as symbols from './symbols';
 export const Symbols = symbols;

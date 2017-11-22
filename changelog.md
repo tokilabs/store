@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.2
+
+- Add missing export of `MysqlStore`
+
 ## v0.7.1
 
 - Updates Inversify to 4.5.1 and mysql to 2.15.2

@@ -2,7 +2,7 @@
 
 ## Goal
 
-To have a **simple** to library for managing the Read Models.  The kind we use when we want
+To have a **simple** to use library for managing the Read Models. The kind we use when we want
 to store projections of events used in CQRS/ES arquitectures.
 
 The goal of this library is to facilitate **simple** queries against a relational database.
