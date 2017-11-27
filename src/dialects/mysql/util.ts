@@ -1,5 +1,5 @@
-import { format } from 'mysql';
-export { format } from 'mysql';
+import { format, escape } from 'mysql';
+export { format, escape } from 'mysql';
 
 /**
  * Prepares value (when needed) to be passed to mysql's format

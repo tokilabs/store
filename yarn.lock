@@ -1542,9 +1542,9 @@ invariant@^2.2.0:
   dependencies:
     loose-envify "^1.0.0"
 
-inversify@^4.5.1:
-  version "4.5.1"
-  resolved "https://registry.npmjs.org/inversify/-/inversify-4.5.1.tgz#2f8a249e1fc5346e4f28b4b86dfae5af1b673178"
+inversify@4.5.2:
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/inversify/-/inversify-4.5.2.tgz#f2478fd140f398836b2e1fee839f37588f1e6a9b"
 
 is-absolute@^0.2.3:
   version "0.2.6"

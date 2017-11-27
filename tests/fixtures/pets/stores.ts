@@ -18,8 +18,8 @@ const pool = createPool({
   connectionLimit: 1,
   host     : 'localhost',
   user     : 'root',
-  password : 'sbrubles',
-  database : 'petstore'
+  password : '',
+  database : 'petstore',
 });
 
 @DtoClass(Pet)

@@ -44,6 +44,7 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
 
   constructor(table: TTable) {
     super(table);
+    this._orderBy = [];
   }
 
   /**
@@ -55,6 +56,7 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
    * @memberOf Criteria
    */
   public select(fieldListSelector: (table: TTable) => Field[]): Query<TTable> {
+
     const fields = fieldListSelector(this.$table);
 
     if (!fields.length)
@@ -222,11 +224,12 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
     const limit = this.Limit == null ? '' : `LIMIT ${this.Limit}`;
     const offset = this.Offset == null ? '' : `OFFSET ${this.Offset}`;
 
-    if (this.OrderBy) {
+    if (this.OrderBy && this.OrderBy.length > 0) {
       orderBy = `ORDER BY ${
         this.OrderBy.map<string>(
           val => `${val.field} ${val.direction.toString()}`
         ).join(', ')}`;
+      this.clearOrderBy();
     }
 
     if (this.GroupBy) {
@@ -265,10 +268,16 @@ export class Query<TTable extends Table> extends Whereable<TTable, Query<TTable>
     }
 
     sortBy(Array.from(fieldSource), f => f.selectExpr).forEach( (field: IField) => {
-      expr.push(MySQL.format(`${field.selectExpr}${field.alias ? ' as ??' : ''}`, [field.alias]));
+      expr.push(MySQL.format(`${this.escapeSelectExpr(field.selectExpr)}${field.alias ? ' as ??' : ''}`, [field.alias]));
     });
-
     return `SELECT ${expr.join(', ')}`;
+  }
+
+  private escapeSelectExpr(selectExpr: string) {
+    if (selectExpr.includes('COUNT') || selectExpr.includes('GROUP')) {
+      return selectExpr;
+    }
+    return `\`${selectExpr}\``;
   }
 
   private unwrap(field: FieldOrSelector<TTable>): Field {

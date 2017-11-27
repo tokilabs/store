@@ -53,6 +53,7 @@ export class Field implements IField {
     if (!selectExpr || selectExpr.trim() == '')
       throw new Error('Field::constructor(): parameter selectExpr cannot be null or empty');
 
+    
     this.selectExpr = selectExpr;
     this.alias = alias;
   }

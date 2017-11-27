@@ -1,6 +1,6 @@
 {
   "name": "@cashfarm/store",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Library for easily defining and using your Read Model (as in DDD Read Model)",
   "author": "Saulo Vallory <saulo@cashfarm.tech>",
   "license": "MIT",
@@ -11,7 +11,7 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "setup:dev": "yarn install && mkdir -p node_modules/@cashfarm && ln -sf ../../lib node_modules/@cashfarm/store",
+    "setup:dev": "cd tests && mkdir -p node_modules/@cashfarm && ln -sf ../../lib node_modules/@cashfarm/store",
     "build": "yarn run clean && yarn lint && yarn test && yarn tsc && yarn lint:pkg",
     "clean": "trash ./lib",
     "docs": "yarn docs:html && opn docs/index.html",
@@ -21,7 +21,7 @@
     "lint": "tslint --project ./tsconfig.json -c ./tslint.json --type-check",
     "lint:pkg": "ts-package-lint",
     "mocha": "../node_modules/.bin/mocha",
-    "test": "yarn tsc && cd tests && ../node_modules/.bin/mocha ./compiled/**/*.spec.js",
+    "test": "tsc && cd tests && tsc && mocha ./compiled/**/*.spec.js",
     "test:watch": "cd tests && concurrently --kill-others --raw \"tsc -w\" \"mocha -w ./compiled/**/*.spec.js\"",
     "test:debug": "cd tests && tsc && DEBUG=store node-inspector ../node_modules/.bin/_mocha ./compiled/tests/*.spec.js --debug-brk",
     "tsc": "./node_modules/.bin/tsc",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@cashfarm/lang": "^0.6.3",
     "debug": "^2.2.0",
-    "inversify": "^4.5.1",
+    "inversify": "4.5.2",
     "lodash": "^4.17.4",
     "mysql": "^2.15.0",
     "reflect-metadata": "^0.1.10"

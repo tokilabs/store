@@ -32,7 +32,7 @@ describe('Query class', () => {
       );
 
     expect(query.toString()).to.equals(
-      'SELECT birthday, breed, gender, id, species ' +
+      'SELECT `birthday`, `breed`, `gender`, `id`, `species` ' +
       'FROM `pets` ' +
       "WHERE (`birthday` < '2016-02-01 02:00:00' AND `gender` = 'male') " +
         'AND `id` IN (2, 4, 6, 8) ' +
